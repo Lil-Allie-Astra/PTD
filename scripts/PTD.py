@@ -5,6 +5,7 @@ from pathlib import Path
 
 import ffmpeg
 import pyperclip
+from pytube.cli import on_progress
 import pytube
 
 base_path = "C:\\Users\\Public\\Videos"
@@ -87,8 +88,8 @@ def COMBINE():
     print('Finished combining video and audio sources.')
 
 if good_format():
-    video = pytube.YouTube(url_one)
-    audio = pytube.YouTube(url_one)
+    video = pytube.YouTube(url_one, on_progress_callback=on_progress)
+    audio = pytube.YouTube(url_one, on_progress_callback=on_progress)
     title = f'{clean_filename_windows(video.title)}'
     print(str(title))
     if f"{title}.mkv" not in str(f'{find_files(f"{title}.mkv", f"{base_path}")}'):

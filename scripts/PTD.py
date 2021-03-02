@@ -1,5 +1,14 @@
 import glob
 import os
+from os import system
+from platform import system as plsys
+
+op_sys = plsys()
+if 'Windows' in str(op_sys) or 'Linux' in str(op_sys):
+    from getpass import getuser as _getuser
+elif 'Darwin' in str(op_sys):
+    import pwd
+
 import re
 from pathlib import Path
 
@@ -8,7 +17,28 @@ import pyperclip
 from pytube.cli import on_progress
 import pytube
 
-base_path = "C:\\Users\\Public\\Videos"
+# def clear(): 
+#     if name == 'nt': 
+#         _ = system('cls') 
+#     else: 
+#         _ = system('clear')
+global base_path
+
+base_path = "0"
+if op_sys == 'Windows':
+    base_path = str(f"C:\\Users\\{_getuser()}\\Videos")
+elif op_sys == 'Linux':
+    base_path = str(f"/home/{_getuser()}/Videos")
+elif op_sys == 'Darwin':
+    base_path = str(f"/Users/{pwd.getpwuid( os.getuid() )[ 0 ]}/Movies")
+else:
+    print("""I am very sorry for the inconvenience, but I haven't added support for your operating system yet,
+    as I don't know the proper method of finding the active user's username using Python in your given OS.
+    
+    If you'd like to modify this script to include your OS for your personal use, please feel free to do so.""")
+    print(input("Press Enter to exit."))
+    exit()
+
 Path(f'{base_path}').mkdir(parents=True, exist_ok=True)
 
 def find_files(filename, search_path):

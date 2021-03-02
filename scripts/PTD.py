@@ -1,6 +1,7 @@
 import glob
 import os
 from os import system
+from subprocess import run as sprun
 from platform import system as plsys
 
 op_sys = plsys()
@@ -12,10 +13,12 @@ elif 'Darwin' in str(op_sys):
 import re
 from pathlib import Path
 
-import ffmpeg
+# import ffmpeg
 import pyperclip
-from pytube.cli import on_progress
 import pytube
+from pytube.cli import on_progress
+# import browser_cookie3
+# import requests
 
 # def clear(): 
 #     if name == 'nt': 
@@ -26,11 +29,11 @@ global base_path
 
 base_path = "0"
 if op_sys == 'Windows':
-    base_path = str(f"C:\\Users\\{_getuser()}\\Videos")
+    base_path = str(f"C:\\Users\\{_getuser()}\\Videos\\")
 elif op_sys == 'Linux':
-    base_path = str(f"/home/{_getuser()}/Videos")
+    base_path = str(f"/home/{_getuser()}/Videos/")
 elif op_sys == 'Darwin':
-    base_path = str(f"/Users/{pwd.getpwuid( os.getuid() )[ 0 ]}/Movies")
+    base_path = str(f"/Users/{pwd.getpwuid( os.getuid() )[ 0 ]}/Movies/")
 else:
     print("""I am very sorry for the inconvenience, but I haven't added support for your operating system yet,
     as I don't know the proper method of finding the active user's username using Python in your given OS.
@@ -108,18 +111,22 @@ def STREAM_A():
     print('Done downloading audio.')
 
 def COMBINE():
-    os.chdir(f"{base_path}")
+    # os.chdir(f"{base_path}")
     print('Beginning combining video and audio sources.')
-    vid = ffmpeg.input(f'{v_ext}')
-    aud = ffmpeg.input(f'{a_ext}')
-    out = ffmpeg.output(vid, aud, f'{title}.mkv', vcodec='copy', acodec='copy', strict='experimental')
-    overwrite = ffmpeg.overwrite_output(out)
-    overwrite.run()
+    # vid = ffmpeg.input(f'{v_ext}')
+    # aud = ffmpeg.input(f'{a_ext}')
+    # out = ffmpeg.output(vid, aud, f'{title}.mkv', vcodec='copy', acodec='copy', strict='experimental')
+    # overwrite = ffmpeg.overwrite_output(out)
+    # overwrite.run()
+    sprun(['ffmpeg', '-i', f'{base_path}{v_ext}', '-i', f'{base_path}{a_ext}', '-c:v', 'copy', '-c:a', 'copy', f'{base_path}{title}.mkv'])
     print('Finished combining video and audio sources.')
 
 if good_format():
+    # cj = browser_cookie3.firefox(domain_name='www.youtube.com')
+    # r = requests.get(url_one, cookies=cj)
+    
     video = pytube.YouTube(url_one, on_progress_callback=on_progress)
-    audio = pytube.YouTube(url_one, on_progress_callback=on_progress)
+    audio = video
     title = f'{clean_filename_windows(video.title)}'
     print(str(title))
     if f"{title}.mkv" not in str(f'{find_files(f"{title}.mkv", f"{base_path}")}'):

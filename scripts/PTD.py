@@ -1,32 +1,19 @@
 import glob
 import os
-from os import system
 from subprocess import run as sprun
+import re
+from pathlib import Path
+import pyperclip
+import pytube
+from pytube.cli import on_progress
 from platform import system as plsys
-
 op_sys = plsys()
 if 'Windows' in str(op_sys) or 'Linux' in str(op_sys):
     from getpass import getuser as _getuser
 elif 'Darwin' in str(op_sys):
     import pwd
 
-import re
-from pathlib import Path
-
-# import ffmpeg
-import pyperclip
-import pytube
-from pytube.cli import on_progress
-# import browser_cookie3
-# import requests
-
-# def clear(): 
-#     if name == 'nt': 
-#         _ = system('cls') 
-#     else: 
-#         _ = system('clear')
 global base_path
-
 base_path = "0"
 if op_sys == 'Windows':
     base_path = str(f"C:\\Users\\{_getuser()}\\Videos\\")
@@ -56,7 +43,6 @@ def cleanup(filename, search_path):
 
 url_one = pyperclip.paste()
 str(url_one)
-
 def good_format():
     try:
         if "https://www.youtube.com/" in url_one:
@@ -111,20 +97,12 @@ def STREAM_A():
     print('Done downloading audio.')
 
 def COMBINE():
-    # os.chdir(f"{base_path}")
+    os.chdir(f"{base_path}")
     print('Beginning combining video and audio sources.')
-    # vid = ffmpeg.input(f'{v_ext}')
-    # aud = ffmpeg.input(f'{a_ext}')
-    # out = ffmpeg.output(vid, aud, f'{title}.mkv', vcodec='copy', acodec='copy', strict='experimental')
-    # overwrite = ffmpeg.overwrite_output(out)
-    # overwrite.run()
-    sprun(['ffmpeg', '-i', f'{base_path}{v_ext}', '-i', f'{base_path}{a_ext}', '-c:v', 'copy', '-c:a', 'copy', f'{base_path}{title}.mkv'])
+    sprun(['ffmpeg', '-i', f'{v_ext}', '-i', f'{a_ext}', '-c:v', 'copy', '-c:a', 'copy', f'{title}.mkv'])
     print('Finished combining video and audio sources.')
 
 if good_format():
-    # cj = browser_cookie3.firefox(domain_name='www.youtube.com')
-    # r = requests.get(url_one, cookies=cj)
-    
     video = pytube.YouTube(url_one, on_progress_callback=on_progress)
     audio = video
     title = f'{clean_filename_windows(video.title)}'
